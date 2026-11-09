@@ -123,10 +123,10 @@ public class ReaderView extends View {
     }
 
     private void init(Context context) {
-        density = context.getResources().getDisplayMetrics().density;
-        // 正文渲染用系统字体缩放（剔除全局 UI 缩放系数，避免与宽度自适应字号叠加）
-        fontScale = context.getResources().getConfiguration().fontScale
-                / com.einkreader.ui.UiScaleActivity.uiScaleFactor(context);
+        // 阅读区使用未缩放的真实密度：正文字号已有独立的宽度自适应逻辑，
+        // 不参与全局 UI 整版缩放（否则会与存储的字号设置叠加放大）
+        density = com.einkreader.ui.UiScaleActivity.realDensity(context);
+        fontScale = context.getResources().getConfiguration().fontScale;
         refreshHandler = new Handler(Looper.getMainLooper());
 
         // 加载设置

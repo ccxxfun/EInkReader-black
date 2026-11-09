@@ -50,8 +50,9 @@ public class ReadingSettingsActivity extends com.einkreader.ui.UiScaleActivity {
      * 758x1024 密度1.0 → 34；600x800 密度1.0 → 27
      */
     public static float autoFontSize(android.content.Context ctx) {
+        float density = com.einkreader.ui.UiScaleActivity.realDensity(ctx);
         android.util.DisplayMetrics dm = ctx.getResources().getDisplayMetrics();
-        float widthDp = dm.widthPixels / dm.density;
+        float widthDp = dm.widthPixels / density;
         return Math.max(14f, Math.min(40f, widthDp / 22f));
     }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">EInkReader</string>
+    <string name="app_name">EInkReader Black</string>
     <string name="reader">阅读</string>
     <string name="settings">设置</string>
     <string name="library">书库</string>

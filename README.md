@@ -1,8 +1,23 @@
-# EInkReader - 超轻量墨水屏小说阅读器
+# EInkReader Black - 超轻量墨水屏小说阅读器（夜间模式版）
 
 > **APK不足1MB** — 比一张照片还小的阅读器
 
+本仓库是 [xfl1996/EInkReader](https://github.com/xfl1996/EInkReader) 的增强分支，在原版基础上**新增夜间模式（黑底白字）**，并可与原版共存安装。
+
 专为老旧墨水屏设备打造的极简小说阅读器，支持 TXT / EPUB 格式，针对低性能Android设备深度优化。
+
+## 与原版的差异
+
+### 🌙 夜间模式（新增）
+- 底部菜单第一排"日志"后新增**"夜间"按钮**（返回 | 目录 | 设置 | 日志 | 夜间）
+- 一键切换：阅读区、顶部状态栏、底部菜单、加载页整体**黑底白字**
+- 切换自动保存，下次打开保持；切换时触发墨水屏全刷，消除反色残留
+- 夜间模式显示"日间"按钮，再点一次切回白底黑字
+
+### 📦 与原版共存
+- 包名为 `com.einkreader.black`，应用名 **EInkReader Black**
+- 可与原版 EInkReader 同时安装，互不干扰
+- 注意：两个版本数据独立，书籍和阅读进度需要重新导入
 
 ## 核心特性
 
@@ -42,28 +57,34 @@
 
 ## 下载
 
-前往 [Releases](https://github.com/xfl1996/EInkReader/releases) 页面下载最新版本。
+前往本仓库 [Releases](https://github.com/ccxxfun/EInkReader-black/releases) 页面下载最新版本。
 
-### APK 文件说明
+每次推送代码会自动构建，APK 自动发布到 Releases，文件名为 `EInkReader-v版本号-debug.apk`。
 
-| 文件名 | 适用架构 | 说明 |
-|--------|----------|------|
-| `app-armeabi-v7a-debug.apk` | 32位 ARM | 适配大部分老设备（全志A133等） |
-| `app-arm64-v8a-debug.apk` | 64位 ARM | 适配较新的ARM设备 |
-| `app-debug.apk` | 全架构通用 | 包含32位+64位ARM，体积略大但兼容性最好 |
+### 安装说明
+
+```bash
+# 直接安装（可与原版共存，无需卸载原版）
+adb install EInkReader-v1.1.0-debug.apk
+```
 
 ## 构建
 
+本仓库已配置 GitHub Actions，推送后自动构建并发布 APK。
+
+本地构建：
+
 ```bash
 # 需要 Android SDK 和 Gradle
-./gradlew assembleDebug
+gradle assembleDebug
 ```
 
 要求：
 - Android SDK (compileSdk 35)
 - Gradle 8.14+
-- JDK 8+
+- JDK 17+
 
 ## 许可证
 
 MIT License
+

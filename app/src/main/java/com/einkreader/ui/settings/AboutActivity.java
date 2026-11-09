@@ -154,7 +154,9 @@ public class AboutActivity extends com.einkreader.ui.UiScaleActivity {
             if (downloadUrl != null) {
                 tvUpdateStatus.setOnClickListener(v -> {
                     try {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl));
+                        // 国内访问 GitHub 下载慢/不通，走加速代理
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("https://ghfast.top/" + downloadUrl));
                         startActivity(intent);
                     } catch (Exception e) {
                         Toast.makeText(this, "无法打开下载链接", Toast.LENGTH_SHORT).show();

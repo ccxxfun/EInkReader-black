@@ -95,10 +95,14 @@ public class ReaderActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        // 首次运行按屏幕宽度自动设置默认字号（适配不同分辨率墨水屏）
+        // 必须在 setContentView 之前，ReaderView 初始化时会读取字号
+        prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        ReadingSettingsActivity.ensureTextSizeInitialized(this, prefs);
+
         setContentView(R.layout.activity_reader);
 
         uiHandler = new Handler(Looper.getMainLooper());
-        prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
         // 应用保存的亮度
         float savedBrightness = safeGetFloat(prefs, "screen_brightness", 0.5f);

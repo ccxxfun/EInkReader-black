@@ -41,6 +41,36 @@ public class ReadingSettingsActivity extends Activity {
     public static final String KEY_REFRESH_DELAY2 = "refresh_delay2";
     /** 夜间模式 SharedPreferences key */
     public static final String KEY_NIGHT_MODE = "night_mode";
+    /** 阅读器实际使用的字号 key（与 text_size 保持一致） */
+    public static final String KEY_TEXT_SIZE = "text_size";
+
+    /**
+     * 根据屏幕宽度自动计算默认字号
+     * 目标：一行约22个汉字，适配不同分辨率/密度的墨水屏
+     * 758x1024 密度1.0 → 34；600x800 密度1.0 → 27
+     */
+    public static float autoFontSize(android.content.Context ctx) {
+        android.util.DisplayMetrics dm = ctx.getResources().getDisplayMetrics();
+        float widthDp = dm.widthPixels / dm.density;
+        return Math.max(14f, Math.min(40f, widthDp / 22f));
+    }
+
+    /**
+     * 确保字号已初始化：首次运行按屏幕宽度自动设置；旧数据迁移 font_size → text_size
+     */
+    public static void ensureTextSizeInitialized(android.content.Context ctx, SharedPreferences prefs) {
+        if (prefs.getBoolean("text_size_initialized", false)) return;
+        if (!prefs.contains(KEY_TEXT_SIZE)) {
+            // 迁移旧版设置页写入的 font_size（该key此前实际未生效）
+            float legacy = prefs.getFloat("font_size", -1f);
+            if (legacy > 0) {
+                prefs.edit().putFloat(KEY_TEXT_SIZE, legacy).apply();
+            } else {
+                prefs.edit().putFloat(KEY_TEXT_SIZE, autoFontSize(ctx)).apply();
+            }
+        }
+        prefs.edit().putBoolean("text_size_initialized", true).apply();
+    }
 
     private static final int REQUEST_PICK_FONT = 3001;
 
@@ -120,8 +150,8 @@ public class ReadingSettingsActivity extends Activity {
 
     private void loadCurrentSettings() {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        fontSize = (int) safeGetFloat(prefs, "font_size", 20f);
-        lineHeightInt = (int) safeGetFloat(prefs, "line_spacing", 1.3f) * 10;
+        fontSize = (int) safeGetFloat(prefs, KEY_TEXT_SIZE, autoFontSize(this));
+        lineHeightInt = (int) (safeGetFloat(prefs, "line_spacing", 1.3f) * 10);
         paragraphSpacing = (int) safeGetFloat(prefs, "paragraph_spacing", 0f);
         letterSpacing = (int) safeGetFloat(prefs, "letter_spacing", 0f);
         fontWeight = (int) safeGetFloat(prefs, "font_weight", 0f);
@@ -346,7 +376,7 @@ public class ReadingSettingsActivity extends Activity {
     }
 
     private void resetToDefaults() {
-        fontSize = 20; lineHeightInt = 13; paragraphSpacing = 0; letterSpacing = 0;
+        fontSize = (int) autoFontSize(this); lineHeightInt = 13; paragraphSpacing = 0; letterSpacing = 0;
         fontWeight = 0; paddingTop = 6; paddingBottom = 6; paddingHorizontal = 8;
         pageRefreshInterval = 0; refreshDelay1 = 400; refreshDelay2 = 400; overlapLines = 0;
 
@@ -369,8 +399,8 @@ public class ReadingSettingsActivity extends Activity {
 
     private void saveAndFinish() {
         SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
-        editor.putFloat("font_size", fontSize);
-        editor.putFloat("line_height", lineHeightInt / 10f);
+        editor.putFloat(KEY_TEXT_SIZE, fontSize);
+        editor.putFloat("line_spacing", lineHeightInt / 10f);
         editor.putFloat("paragraph_spacing", paragraphSpacing);
         editor.putFloat("letter_spacing", letterSpacing);
         editor.putFloat("font_weight", fontWeight);

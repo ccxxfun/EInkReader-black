@@ -152,7 +152,7 @@ public class LibraryActivity extends com.einkreader.ui.UiScaleActivity {
             public void onClick(View v) {
                 new AlertDialog.Builder(LibraryActivity.this)
                     .setTitle("退出")
-                    .setMessage("确定退出 EInkReader？")
+                    .setMessage("确定退出 EInkReader Black？")
                     .setPositiveButton("退出", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -194,7 +194,7 @@ public class LibraryActivity extends com.einkreader.ui.UiScaleActivity {
                 if (!Environment.isExternalStorageManager()) {
                     new AlertDialog.Builder(this)
                         .setTitle("需要存储权限")
-                        .setMessage("EInkReader 需要访问所有文件的权限，以便浏览和导入电子书。\n\n请在接下来的设置页面中开启「允许管理所有文件」。")
+                        .setMessage("EInkReader Black 需要访问所有文件的权限，以便浏览和导入电子书。\n\n请在接下来的设置页面中开启「允许管理所有文件」。")
                         .setPositiveButton("去开启", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

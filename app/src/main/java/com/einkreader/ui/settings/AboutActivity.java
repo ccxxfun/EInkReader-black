@@ -64,6 +64,19 @@ public class AboutActivity extends com.einkreader.ui.UiScaleActivity {
                 Toast.makeText(this, "无法打开浏览器", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // 开发者/项目地址点击 - 打开 GitHub 仓库
+        View.OnClickListener openRepo = v -> {
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/ccxxfun/EInkReader-black"));
+                startActivity(intent);
+            } catch (Exception e) {
+                Toast.makeText(this, "无法打开浏览器", Toast.LENGTH_SHORT).show();
+            }
+        };
+        findViewById(R.id.tv_developer).setOnClickListener(openRepo);
+        findViewById(R.id.tv_repo).setOnClickListener(openRepo);
     }
 
     private void checkForUpdates() {
@@ -73,7 +86,7 @@ public class AboutActivity extends com.einkreader.ui.UiScaleActivity {
 
         new Thread(() -> {
             try {
-                URL url = new URL("https://api.github.com/repos/xfl1996/EInkReader/releases/latest");
+                URL url = new URL("https://api.github.com/repos/ccxxfun/EInkReader-black/releases/latest");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Accept", "application/vnd.github.v3+json");

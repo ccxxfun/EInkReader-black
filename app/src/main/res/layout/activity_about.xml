@@ -61,7 +61,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="EInkReader"
+                android:text="EInkReader Black"
                 android:textSize="26sp"
                 android:textColor="#FF000000"
                 android:textStyle="bold" />
@@ -101,12 +101,32 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tv_developer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="xfl1996"
+                android:text="ccxxfun (GitHub)"
                 android:textSize="16sp"
-                android:textColor="#FF333333"
-                android:layout_marginTop="4dp" />
+                android:textColor="#FF0066CC"
+                android:layout_marginTop="4dp"
+                android:padding="8dp" />
+
+            <TextView
+                android:id="@+id/tv_repo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="github.com/ccxxfun/EInkReader-black"
+                android:textSize="13sp"
+                android:textColor="#FF0066CC"
+                android:layout_marginTop="2dp"
+                android:padding="4dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="原开发者 xfl1996"
+                android:textSize="14sp"
+                android:textColor="#FF999999"
+                android:layout_marginTop="8dp" />
 
             <!-- B站二维码 -->
             <TextView

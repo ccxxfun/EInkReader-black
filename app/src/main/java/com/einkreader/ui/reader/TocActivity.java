@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * 墨水屏不适合滑动，改用箭头按钮翻页
  * 底部：大箭头(±10页) 小箭头(±1页) 页码
  */
-public class TocActivity extends Activity {
+public class TocActivity extends com.einkreader.ui.UiScaleActivity {
 
     public static final String EXTRA_CHAPTERS = "chapter_titles";
     public static final String EXTRA_CURRENT_CHAPTER = "current_chapter";

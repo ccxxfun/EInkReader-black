@@ -37,7 +37,7 @@ import java.util.Locale;
  * 阅读器 Activity
  * 纯文字底部菜单栏、音量键/硬件翻页键翻页、白底黑字顶部状态栏
  */
-public class ReaderActivity extends Activity {
+public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
 
     private static final String PREFS_NAME = "eink_reader_prefs";
     private static final int REQUEST_TOC = 2001;

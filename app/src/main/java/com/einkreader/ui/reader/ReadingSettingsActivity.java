@@ -24,7 +24,7 @@ import java.io.OutputStream;
 /**
  * 阅读设置页面 - 纯文字加减按钮风格，适配墨水屏
  */
-public class ReadingSettingsActivity extends Activity {
+public class ReadingSettingsActivity extends com.einkreader.ui.UiScaleActivity {
 
     private static final String PREFS_NAME = "eink_reader_prefs";
 

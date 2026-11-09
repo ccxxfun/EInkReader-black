@@ -32,7 +32,7 @@ import java.util.List;
  * - 主页按钮：使用可靠的存储根路径列表探测
  * - 标题栏：修复多余文件夹名显示
  */
-public class FilePickerActivity extends Activity {
+public class FilePickerActivity extends com.einkreader.ui.UiScaleActivity {
 
     public static final String EXTRA_SELECTED_PATH = "selected_path";
     public static final String EXTRA_START_DIR = "start_dir";

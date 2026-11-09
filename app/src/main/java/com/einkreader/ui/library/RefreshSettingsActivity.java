@@ -21,7 +21,7 @@ import com.einkreader.core.refresh.RefreshMode;
  * 墨水屏刷新设置界面
  * 配置自动全刷间隔、刷新模式、手动全刷
  */
-public class RefreshSettingsActivity extends Activity {
+public class RefreshSettingsActivity extends com.einkreader.ui.UiScaleActivity {
 
     private static final String PREFS_NAME = "eink_reader_prefs";
     private static final String KEY_FULL_REFRESH_INTERVAL = "full_refresh_interval";

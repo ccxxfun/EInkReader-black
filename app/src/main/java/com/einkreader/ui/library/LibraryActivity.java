@@ -39,7 +39,7 @@ import java.util.List;
  * 书库主界面 Activity
  * 显示书籍列表，支持导入 TXT/EPUB、打开阅读、删除书籍
  */
-public class LibraryActivity extends Activity {
+public class LibraryActivity extends com.einkreader.ui.UiScaleActivity {
 
     private static final int REQUEST_PICK_FILE = 1001;
     private static final int REQUEST_FILE_PICKER = 1002;

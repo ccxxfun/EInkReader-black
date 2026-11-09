@@ -24,7 +24,7 @@ import java.net.URL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class AboutActivity extends Activity {
+public class AboutActivity extends com.einkreader.ui.UiScaleActivity {
 
     private TextView tvVersion, tvUpdateStatus, tvChangelogTitle, tvChangelog;
 

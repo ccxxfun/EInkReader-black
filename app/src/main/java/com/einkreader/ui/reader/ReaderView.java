@@ -124,7 +124,9 @@ public class ReaderView extends View {
 
     private void init(Context context) {
         density = context.getResources().getDisplayMetrics().density;
-        fontScale = context.getResources().getConfiguration().fontScale;
+        // 正文渲染用系统字体缩放（剔除全局 UI 缩放系数，避免与宽度自适应字号叠加）
+        fontScale = context.getResources().getConfiguration().fontScale
+                / com.einkreader.ui.UiScaleActivity.uiScaleFactor(context);
         refreshHandler = new Handler(Looper.getMainLooper());
 
         // 加载设置

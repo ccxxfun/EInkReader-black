@@ -30,7 +30,7 @@ import java.util.Set;
  * 支持字体大小、行距、刷新模式、全局刷新间隔、翻页方式等配置
  * 所有设置通过 SharedPreferences 保存，实时生效
  */
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends com.einkreader.ui.UiScaleActivity {
 
     public static final String PREFS_NAME = "eink_reader_settings";
     public static final String KEY_FONT_SIZE = "font_size";

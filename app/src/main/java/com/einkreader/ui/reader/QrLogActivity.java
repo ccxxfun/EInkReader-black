@@ -35,7 +35,7 @@ import java.util.Map;
  *   "log_pages" - 分页后的文本列表 (ArrayList<String>)，优先使用
  *   "page_index" - 初始显示第几页（从0开始）
  */
-public class QrLogActivity extends Activity {
+public class QrLogActivity extends com.einkreader.ui.UiScaleActivity {
 
     private ImageView qrImageView;
     private TextView pageInfoText;

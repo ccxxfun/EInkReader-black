@@ -120,40 +120,29 @@
                 android:layout_marginTop="2dp"
                 android:padding="4dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="原开发者 xfl1996"
-                android:textSize="14sp"
-                android:textColor="#FF999999"
-                android:layout_marginTop="8dp" />
+            <!-- 分隔线：开发者 / 原开发者 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#FFCCCCCC"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp" />
 
-            <!-- B站二维码 -->
+            <!-- 原开发者 -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="B站关注我"
-                android:textSize="16sp"
+                android:text="原开发者"
+                android:textSize="18sp"
                 android:textColor="#FF000000"
-                android:textStyle="bold"
-                android:layout_marginTop="16dp" />
-
-            <ImageView
-                android:id="@+id/iv_qrcode"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:src="@drawable/qrcode_bilibili"
-                android:scaleType="fitCenter"
-                android:layout_marginTop="8dp"
-                android:background="#FFFFFFFF"
-                android:padding="8dp" />
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="扫码访问B站主页"
-                android:textSize="13sp"
-                android:textColor="#FF999999"
+                android:text="xfl1996"
+                android:textSize="16sp"
+                android:textColor="#FF333333"
                 android:layout_marginTop="4dp" />
 
             <!-- 分隔线 -->

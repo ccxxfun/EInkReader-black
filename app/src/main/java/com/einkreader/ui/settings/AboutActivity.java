@@ -54,17 +54,6 @@ public class AboutActivity extends com.einkreader.ui.UiScaleActivity {
         TextView btnCheckUpdate = findViewById(R.id.btn_check_update);
         btnCheckUpdate.setOnClickListener(v -> checkForUpdates());
 
-        // B站二维码点击 - 跳转浏览器
-        findViewById(R.id.iv_qrcode).setOnClickListener(v -> {
-            try {
-                Intent intent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://space.bilibili.com"));
-                startActivity(intent);
-            } catch (Exception e) {
-                Toast.makeText(this, "无法打开浏览器", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         // 开发者/项目地址点击 - 打开 GitHub 仓库
         View.OnClickListener openRepo = v -> {
             try {

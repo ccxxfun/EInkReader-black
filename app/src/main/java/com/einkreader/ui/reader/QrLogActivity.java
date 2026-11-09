@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.einkreader.R;
@@ -41,7 +42,11 @@ public class QrLogActivity extends com.einkreader.ui.UiScaleActivity {
     private TextView pageInfoText;
     private Button btnPrev;
     private Button btnNext;
+    private Button btnToggleQr;
     private Button btnClose;
+    private TextView logTextView;
+    private ScrollView textScroll;
+    private boolean showQrMode = false;
 
     private List<String> pages;
     private int currentPage = 0;
@@ -62,13 +67,26 @@ public class QrLogActivity extends com.einkreader.ui.UiScaleActivity {
         root.setBackgroundColor(Color.WHITE);
         root.setPadding(0, 0, 0, 0);
 
-        // 二维码图片（尽可能大）
+        // 日志文字（默认显示，可滚动）
+        logTextView = new TextView(this);
+        logTextView.setTextSize(14);
+        logTextView.setTextColor(Color.BLACK);
+        logTextView.setPadding(24, 16, 24, 16);
+        ScrollView textScroll = new ScrollView(this);
+        textScroll.setBackgroundColor(Color.WHITE);
+        textScroll.addView(logTextView);
+        LinearLayout.LayoutParams textLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f);
+        root.addView(textScroll, textLp);
+
+        // 二维码图片（默认隐藏，通过按钮切换）
         qrImageView = new ImageView(this);
         LinearLayout.LayoutParams qrLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f);
         qrImageView.setLayoutParams(qrLp);
         qrImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         qrImageView.setBackgroundColor(Color.WHITE);
+        qrImageView.setVisibility(View.GONE);
         root.addView(qrImageView);
 
         // 页码提示
@@ -97,6 +115,9 @@ public class QrLogActivity extends com.einkreader.ui.UiScaleActivity {
 
         btnNext = makeButton("下一页 ▶");
         btnBar.addView(btnNext);
+
+        btnToggleQr = makeButton("二维码");
+        btnBar.addView(btnToggleQr);
 
         btnClose = makeButton("关闭");
         btnBar.addView(btnClose);
@@ -146,6 +167,15 @@ public class QrLogActivity extends com.einkreader.ui.UiScaleActivity {
             }
         });
 
+        // 文字 / 二维码切换
+        btnToggleQr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showQrMode = !showQrMode;
+                showCurrentPage();
+            }
+        });
+
         showCurrentPage();
     }
 
@@ -154,13 +184,25 @@ public class QrLogActivity extends com.einkreader.ui.UiScaleActivity {
 
         String pageContent = pages.get(currentPage);
 
-        // 生成二维码
-        Bitmap qr = generateQrBitmap(pageContent);
-        if (qr != null) {
-            qrImageView.setImageBitmap(qr);
+        if (showQrMode) {
+            // 二维码模式
+            textScroll.setVisibility(View.GONE);
+            qrImageView.setVisibility(View.VISIBLE);
+            Bitmap qr = generateQrBitmap(pageContent);
+            if (qr != null) {
+                qrImageView.setImageBitmap(qr);
+            } else {
+                qrImageView.setImageBitmap(null);
+                pageInfoText.setText("二维码生成失败！文本可能过长");
+            }
+            btnToggleQr.setText("看文字");
         } else {
-            qrImageView.setImageBitmap(null);
-            pageInfoText.setText("二维码生成失败！文本可能过长");
+            // 文字模式（默认）
+            textScroll.setVisibility(View.VISIBLE);
+            qrImageView.setVisibility(View.GONE);
+            logTextView.setText(pageContent);
+            textScroll.smoothScrollTo(0, 0);
+            btnToggleQr.setText("二维码");
         }
 
         // 更新页码

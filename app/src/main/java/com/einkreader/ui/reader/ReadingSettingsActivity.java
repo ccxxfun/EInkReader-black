@@ -39,6 +39,8 @@ public class ReadingSettingsActivity extends Activity {
     /** 全刷延时 SharedPreferences key */
     public static final String KEY_REFRESH_DELAY1 = "refresh_delay1";
     public static final String KEY_REFRESH_DELAY2 = "refresh_delay2";
+    /** 夜间模式 SharedPreferences key */
+    public static final String KEY_NIGHT_MODE = "night_mode";
 
     private static final int REQUEST_PICK_FONT = 3001;
 

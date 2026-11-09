@@ -249,6 +249,19 @@ public class ReaderView extends View {
         refreshDelay1 = safeGetInt(ReadingSettingsActivity.KEY_REFRESH_DELAY1, 400);
         refreshDelay2 = safeGetInt(ReadingSettingsActivity.KEY_REFRESH_DELAY2, 400);
         customFontPath = prefs.getString("custom_font_path", null);
+
+        // 夜间模式：黑底白字
+        boolean nightMode = safeGetBoolean(ReadingSettingsActivity.KEY_NIGHT_MODE, false);
+        if (nightMode) {
+            textColor = Color.WHITE;
+            bgColor = Color.BLACK;
+        } else {
+            textColor = Color.BLACK;
+            bgColor = Color.WHITE;
+        }
+        if (textPaint != null) {
+            textPaint.setColor(textColor);
+        }
     }
 
     public void applySettings() {
@@ -655,13 +668,13 @@ public class ReaderView extends View {
         if (isRefreshing) {
             isRefreshing = false;
             refreshPhase = 0;
-            // 恢复 DecorView 为白色
+            // 恢复 DecorView 为当前主题背景色
             try {
                 Context ctx = getContext();
                 while (ctx instanceof android.content.ContextWrapper) {
                     if (ctx instanceof android.app.Activity) {
                         android.view.Window w = ((android.app.Activity) ctx).getWindow();
-                        if (w != null) w.getDecorView().setBackgroundColor(Color.WHITE);
+                        if (w != null) w.getDecorView().setBackgroundColor(bgColor);
                         break;
                     }
                     ctx = ((android.content.ContextWrapper) ctx).getBaseContext();
@@ -724,8 +737,8 @@ public class ReaderView extends View {
                             refreshHandler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    // 恢复
-                                    decorView.setBackgroundColor(Color.WHITE);
+                                    // 恢复为当前主题背景色
+                                    decorView.setBackgroundColor(bgColor);
                                 }
                             }, refreshDelay2);
                         }

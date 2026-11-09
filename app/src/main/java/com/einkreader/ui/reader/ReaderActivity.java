@@ -75,6 +75,7 @@ public class ReaderActivity extends Activity {
     private TextView btnShowLog;
     private TextView btnBrightMinus;
     private TextView btnBrightPlus;
+    private TextView btnNightMode;
 
     private EinkRefreshManager refreshManager;
     private List<Chapter> chapters;
@@ -136,7 +137,11 @@ public class ReaderActivity extends Activity {
         btnShowLog = (TextView) findViewById(R.id.btn_show_log);
         btnBrightMinus = (TextView) findViewById(R.id.btn_bright_minus);
         btnBrightPlus = (TextView) findViewById(R.id.btn_bright_plus);
+        btnNightMode = (TextView) findViewById(R.id.btn_night_mode);
         loadingOverlay = findViewById(R.id.loading_overlay);
+
+        // 应用夜间/日间主题（阅读区、菜单、状态栏、加载页整体换色）
+        applyTheme(prefs.getBoolean(ReadingSettingsActivity.KEY_NIGHT_MODE, false));
 
         // 初始化亮度按钮文字
         float initBrightness = safeGetFloat(prefs, "screen_brightness", 0.5f);
@@ -197,6 +202,12 @@ public class ReaderActivity extends Activity {
             public void onClick(View v) {
                 toggleMenu(false);
                 showLogAsQr();
+            }
+        });
+        btnNightMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleNightMode();
             }
         });
         btnBrightMinus.setOnClickListener(new View.OnClickListener() {
@@ -565,6 +576,58 @@ public class ReaderActivity extends Activity {
         WindowManager.LayoutParams lp = getWindow().getAttributes();
         lp.screenBrightness = brightness;
         getWindow().setAttributes(lp);
+    }
+
+    /**
+     * 切换夜间模式（黑底白字 ↔ 白底黑字），保存并整体刷新界面
+     */
+    private void toggleNightMode() {
+        boolean night = !prefs.getBoolean(ReadingSettingsActivity.KEY_NIGHT_MODE, false);
+        prefs.edit().putBoolean(ReadingSettingsActivity.KEY_NIGHT_MODE, night).apply();
+        // 阅读区换色（背景+文字）
+        if (readerView != null) readerView.applySettings();
+        // 菜单/状态栏/加载页换色
+        applyTheme(night);
+        // 墨水屏全刷一次，消除反色残留
+        if (readerView != null) readerView.performFullRefresh();
+    }
+
+    /**
+     * 应用夜间/日间主题到阅读页所有界面元素
+     * 遍历视图树：文字控件用前景色，容器用背景色，分隔线用前景色
+     */
+    private void applyTheme(boolean night) {
+        int bgColor = night ? Color.BLACK : Color.WHITE;
+        int fgColor = night ? Color.WHITE : Color.BLACK;
+
+        View root = findViewById(R.id.root_layout);
+        if (root != null) {
+            applyThemeToView(root, bgColor, fgColor);
+        }
+        if (btnNightMode != null) {
+            btnNightMode.setText(night ? "日间" : "夜间");
+        }
+    }
+
+    private void applyThemeToView(View v, int bgColor, int fgColor) {
+        // 阅读区自己管理颜色，跳过
+        if (v.getId() == R.id.reader_view) return;
+
+        if (v instanceof TextView) {
+            ((TextView) v).setTextColor(fgColor);
+            // 按钮本身透明背景由容器决定，容器已统一着色
+            return;
+        }
+        if (v instanceof android.view.ViewGroup) {
+            v.setBackgroundColor(bgColor);
+            android.view.ViewGroup vg = (android.view.ViewGroup) v;
+            for (int i = 0; i < vg.getChildCount(); i++) {
+                applyThemeToView(vg.getChildAt(i), bgColor, fgColor);
+            }
+            return;
+        }
+        // 分隔线等普通 View
+        v.setBackgroundColor(fgColor);
     }
 
     /**

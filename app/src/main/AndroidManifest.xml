@@ -69,12 +69,6 @@
             android:label="选择文件"
             android:screenOrientation="portrait" />
 
-        <activity
-            android:name=".ui.reader.QrLogActivity"
-            android:label="日志二维码"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-
     </application>
 
 </manifest>

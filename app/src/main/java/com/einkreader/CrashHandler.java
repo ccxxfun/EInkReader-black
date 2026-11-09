@@ -2,11 +2,8 @@ package com.einkreader;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
-
-import com.einkreader.ui.reader.QrLogActivity;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -16,7 +13,7 @@ import java.util.Locale;
 
 /**
  * 全局 Application：捕获所有未处理异常
- * 闪退前自动保存错误信息并启动二维码页面
+ * 闪退前自动保存错误信息（可通过 adb 查看 crash_log）
  */
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
@@ -61,23 +58,11 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
             String logText = sb.toString();
 
-            // 保存到 SharedPreferences，下次首页📋按钮能读到
+            // 保存到 SharedPreferences（保留崩溃现场，便于 adb 排查）
             SharedPreferences crashPrefs = appContext.getSharedPreferences("crash_log", Context.MODE_PRIVATE);
             crashPrefs.edit().putString("last_crash", logText).apply();
 
-            // 启动二维码页面（带 FLAG_ACTIVITY_NEW_TASK 和 CLEAR_TASK）
-            Intent intent = new Intent(appContext, QrLogActivity.class);
-            intent.putExtra("log_text", logText);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                    | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    | Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            appContext.startActivity(intent);
-
-            // 等一下让用户看到二维码，再杀进程
-            Thread.sleep(8000);
-
         } catch (Throwable e) {
-            // 如果连二维码都启动不了，算了（用 Throwable 而非 Exception，确保 Error 也能被捕获）
             e.printStackTrace();
         }
 

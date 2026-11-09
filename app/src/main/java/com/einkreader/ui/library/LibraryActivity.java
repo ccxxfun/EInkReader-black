@@ -101,40 +101,6 @@ public class LibraryActivity extends com.einkreader.ui.UiScaleActivity {
             }
         });
 
-        // 日志按钮 — 显示二维码
-        View btnLog = findViewById(R.id.btn_log);
-        btnLog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 先收集设备信息 + 最近崩溃日志
-                StringBuilder sb = new StringBuilder();
-                sb.append("=== 设备信息 ===\n");
-                sb.append("型号: ").append(android.os.Build.MODEL).append("\n");
-                sb.append("Android: ").append(android.os.Build.VERSION.RELEASE).append("\n");
-                sb.append("SDK: ").append(android.os.Build.VERSION.SDK_INT).append("\n\n");
-
-                // 读取最近的崩溃日志（SharedPreferences）
-                try {
-                    android.content.SharedPreferences crashPrefs = getSharedPreferences("crash_log", MODE_PRIVATE);
-                    String lastCrash = crashPrefs.getString("last_crash", null);
-                    if (lastCrash != null && !lastCrash.isEmpty()) {
-                        sb.append("=== 最近崩溃 ===\n");
-                        sb.append(lastCrash);
-                    } else {
-                        sb.append("(无崩溃记录)\n");
-                    }
-                } catch (Exception e) {
-                    sb.append("读取崩溃日志失败: ").append(e.getMessage()).append("\n");
-                }
-
-                // 启动二维码页面
-                Intent intent = new Intent(LibraryActivity.this,
-                        com.einkreader.ui.reader.QrLogActivity.class);
-                intent.putExtra("log_text", sb.toString());
-                startActivity(intent);
-            }
-        });
-
         // 刷新设置按钮
         View btnRefreshSettings = findViewById(R.id.btn_refresh_settings);
         btnRefreshSettings.setOnClickListener(new View.OnClickListener() {

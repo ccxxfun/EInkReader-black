@@ -43,23 +43,6 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
     private static final int REQUEST_TOC = 2001;
     private static final int REQUEST_READING_SETTINGS = 2002;
 
-    /** 全局错误日志 */
-    private static final StringBuilder errorLog = new StringBuilder();
-    private static final int MAX_LOG_LENGTH = 8000;
-
-    public static void appendLog(String tag, String message) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-        String ts = sdf.format(new Date());
-        errorLog.append("[").append(ts).append("] ").append(tag).append(": ").append(message).append("\n");
-        if (errorLog.length() > MAX_LOG_LENGTH) {
-            errorLog.delete(0, errorLog.length() - MAX_LOG_LENGTH);
-        }
-    }
-
-    public static String getLog() {
-        return errorLog.toString();
-    }
-
     private ReaderView readerView;
     private View topStatusBar;
     private View bottomMenu;
@@ -72,7 +55,6 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
     private TextView btnFontPlus;
     private TextView btnSettings;
     private TextView btnFullRefresh;
-    private TextView btnShowLog;
     private TextView btnBrightMinus;
     private TextView btnBrightPlus;
     private TextView btnNightMode;
@@ -138,7 +120,6 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
         btnFontPlus = (TextView) findViewById(R.id.btn_font_plus);
         btnSettings = (TextView) findViewById(R.id.btn_settings);
         btnFullRefresh = (TextView) findViewById(R.id.btn_full_refresh);
-        btnShowLog = (TextView) findViewById(R.id.btn_show_log);
         btnBrightMinus = (TextView) findViewById(R.id.btn_bright_minus);
         btnBrightPlus = (TextView) findViewById(R.id.btn_bright_plus);
         btnNightMode = (TextView) findViewById(R.id.btn_night_mode);
@@ -201,13 +182,6 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
                 }
             }
         });
-        btnShowLog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleMenu(false);
-                showLogAsQr();
-            }
-        });
         btnNightMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -264,7 +238,6 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
      * 显示错误信息弹窗
      */
     private void showError(String title, String message) {
-        appendLog("ERROR", title + " | " + message);
         try {
             new AlertDialog.Builder(this)
                 .setTitle(title)
@@ -646,29 +619,6 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
     }
 
     private String filePath;
-
-    /**
-     * 显示日志二维码
-     */
-    private void showLogAsQr() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("=== EInkReader Log ===\n");
-        sb.append("时间: ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date())).append("\n");
-        sb.append("设备: ").append(android.os.Build.MODEL).append("\n");
-        sb.append("系统: Android ").append(android.os.Build.VERSION.RELEASE).append("\n");
-        sb.append("API: ").append(android.os.Build.VERSION.SDK_INT).append("\n\n");
-
-        String log = getLog();
-        if (log.isEmpty()) {
-            sb.append("(暂无日志)\n");
-        } else {
-            sb.append(log);
-        }
-
-        Intent intent = new Intent(this, QrLogActivity.class);
-        intent.putExtra("log_text", sb.toString());
-        startActivity(intent);
-    }
 
     // ==================== 生命周期 ====================
 

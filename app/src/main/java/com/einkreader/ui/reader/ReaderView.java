@@ -51,7 +51,9 @@ public class ReaderView extends View {
     private float paragraphSpacing = 10f;  // dp
     private float letterSpacing = 0f;
     private int fontWeight = 0;            // -50 ~ +50
-    private int touchMode = TOUCH_TAP_LEFT_RIGHT;
+    private int touchMode = TOUCH_SWIPE;
+    /** 3x3 点击区域动作表：0=无操作 1=上一页 2=下一页 3=菜单 */
+    private final int[] tapZones = new int[9];
     private int paddingLeft = 8;
     private int paddingRight = 8;
     private int paddingTop = 6;
@@ -240,7 +242,12 @@ public class ReaderView extends View {
         paragraphSpacing = safeGetFloat("paragraph_spacing", 10f);
         letterSpacing = safeGetFloat("letter_spacing", 0f);
         fontWeight = safeGetInt("font_weight", 0);
-        touchMode = safeGetInt("touch_mode", TOUCH_TAP_LEFT_RIGHT);
+        // 点击区域动作（3x3 九宫格，0=无操作 1=上一页 2=下一页 3=菜单）
+        for (int i = 0; i < 9; i++) {
+            tapZones[i] = safeGetInt("tap_zone_" + i, defaultTapZone(i));
+        }
+        // 翻页手势始终保留滑动；点击翻页改由点击区域接管
+        touchMode = TOUCH_SWIPE;
         chapterRefresh = safeGetBoolean(ReadingSettingsActivity.KEY_CHAPTER_REFRESH, true);
         pageRefreshInterval = safeGetInt(ReadingSettingsActivity.KEY_PAGE_REFRESH_INTERVAL, 0);
         paddingTop = safeGetInt("padding_top", 6);
@@ -755,44 +762,37 @@ public class ReaderView extends View {
     // ==================== 点击处理 ====================
 
     private void handleTap(float x, float y) {
-        // 所有模式下，点击中间区域都弹出菜单
-        float ratioX = x / viewWidth;
-        float ratioY = y / viewHeight;
-        if (ratioX > 0.25f && ratioX < 0.75f && ratioY > 0.15f && ratioY < 0.85f) {
-            if (pageChangeListener != null) pageChangeListener.onTapCenter();
-            return;
-        }
+        // 3x3 点击区域：按九宫格查表执行动作（无操作/上一页/下一页/菜单）
+        int col = (int) (x * 3f / Math.max(1f, viewWidth));
+        int row = (int) (y * 3f / Math.max(1f, viewHeight));
+        col = Math.max(0, Math.min(2, col));
+        row = Math.max(0, Math.min(2, row));
 
-        // 非中间区域，根据模式处理翻页
-        switch (touchMode) {
-            case TOUCH_TAP_LEFT_RIGHT:
-                if (ratioX < 0.3f) {
-                    if (!prevPage()) {
-                        if (pageChangeListener != null) pageChangeListener.onChapterChanged(-1);
-                    }
-                } else if (ratioX > 0.7f) {
-                    if (!nextPage()) {
-                        if (pageChangeListener != null) pageChangeListener.onChapterChanged(1);
-                    }
+        int action = tapZones[row * 3 + col];
+        switch (action) {
+            case 1: // 上一页
+                if (!prevPage()) {
+                    if (pageChangeListener != null) pageChangeListener.onChapterChanged(-1);
                 }
                 break;
-
-            case TOUCH_TAP_ANYWHERE:
-                if (ratioX < 0.5f) {
-                    if (!prevPage()) {
-                        if (pageChangeListener != null) pageChangeListener.onChapterChanged(-1);
-                    }
-                } else {
-                    if (!nextPage()) {
-                        if (pageChangeListener != null) pageChangeListener.onChapterChanged(1);
-                    }
+            case 2: // 下一页
+                if (!nextPage()) {
+                    if (pageChangeListener != null) pageChangeListener.onChapterChanged(1);
                 }
                 break;
-
-            case TOUCH_SWIPE:
-                // 滑动模式下，非中间区域的点击不做处理（翻页靠滑动手势）
+            case 3: // 菜单
+                if (pageChangeListener != null) pageChangeListener.onTapCenter();
+                break;
+            default: // 无操作
                 break;
         }
+    }
+
+    /** 九宫格默认动作：上排上一页，中排 下一页/菜单/下一页，下排下一页 */
+    public static int defaultTapZone(int index) {
+        if (index < 3) return 1;       // 上一页
+        if (index == 4) return 3;      // 菜单
+        return 2;                      // 下一页
     }
 
     /**

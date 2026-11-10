@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.RadioGroup;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -94,9 +93,6 @@ public class ReadingSettingsActivity extends com.einkreader.ui.UiScaleActivity {
     // 粗细 (-50 到 +50, step 5)
     private int fontWeight = 0;
     private TextView tvWeightValue;
-
-    // 触屏模式
-    private RadioGroup rgTouchMode;
 
     // 物理按键映射
     private int prevKeycode = KeyEvent.KEYCODE_PAGE_UP;
@@ -240,12 +236,12 @@ public class ReadingSettingsActivity extends com.einkreader.ui.UiScaleActivity {
             }
         });
 
-        // ===== 触屏翻页模式 =====
-        rgTouchMode = findViewById(R.id.rg_touch_mode);
-        int savedMode = (int) safeGetFloat(getSharedPreferences(PREFS_NAME, MODE_PRIVATE), "touch_mode", 0f);
-        if (savedMode == 1) rgTouchMode.check(R.id.rb_tap_anywhere);
-        else if (savedMode == 2) rgTouchMode.check(R.id.rb_swipe);
-        else rgTouchMode.check(R.id.rb_tap_left_right);
+        // ===== 点击区域设置 =====
+        findViewById(R.id.btn_tap_zones).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                startActivity(new Intent(ReadingSettingsActivity.this, TapZoneActivity.class));
+            }
+        });
 
         // ===== 物理按键映射 =====
         tvKeyMappingHint = findViewById(R.id.tv_key_mapping_hint);
@@ -393,7 +389,6 @@ public class ReadingSettingsActivity extends com.einkreader.ui.UiScaleActivity {
         updatePageRefreshDisplay();
         tvRefreshDelay1Value.setText(refreshDelay1 + "ms");
         tvRefreshDelay2Value.setText(refreshDelay2 + "ms");
-        ((RadioButton) findViewById(R.id.rb_tap_left_right)).setChecked(true);
         cbChapterRefresh.setChecked(true);
         tvKeyMappingHint.setText("已恢复默认设置"); tvKeyMappingHint.setVisibility(View.VISIBLE);
     }
@@ -413,11 +408,6 @@ public class ReadingSettingsActivity extends com.einkreader.ui.UiScaleActivity {
         editor.putFloat(KEY_REFRESH_DELAY1, refreshDelay1);
         editor.putFloat(KEY_REFRESH_DELAY2, refreshDelay2);
         editor.putFloat("overlap_lines", overlapLines);
-        int checkedId = rgTouchMode.getCheckedRadioButtonId();
-        int touchMode = 0;
-        if (checkedId == R.id.rb_tap_anywhere) touchMode = 1;
-        else if (checkedId == R.id.rb_swipe) touchMode = 2;
-        editor.putFloat("touch_mode", touchMode);
         editor.putInt(KEY_PREV_KEYCODE, prevKeycode);
         editor.putInt(KEY_NEXT_KEYCODE, nextKeycode);
         editor.putString(KEY_PREV_KEY_NAME, prevKeyName);

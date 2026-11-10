@@ -77,14 +77,12 @@
                 <TextView android:id="@+id/btn_reset_font" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:gravity="center" android:text="恢复默认" android:textSize="15sp" android:textColor="#FF4444" android:background="@android:color/white" android:clickable="true" android:focusable="true" />
             </LinearLayout>
 
-            <!-- ===== 触屏翻页模式 ===== -->
+            <!-- ===== 点击区域设置 ===== -->
             <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#CCCCCC" android:layout_marginTop="8dp" />
-            <TextView android:layout_width="match_parent" android:layout_height="36dp" android:gravity="center_vertical" android:text="触屏翻页" android:textSize="14sp" android:textColor="@android:color/black" android:paddingLeft="12dp" android:textStyle="bold" />
-            <RadioGroup android:id="@+id/rg_touch_mode" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingLeft="12dp" android:paddingRight="12dp">
-                <RadioButton android:id="@+id/rb_tap_left_right" android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:text="点左/右" android:textSize="13sp" android:textColor="@android:color/black" android:button="@null" android:drawableRight="@android:drawable/btn_radio" android:gravity="center_vertical" android:checked="true" />
-                <RadioButton android:id="@+id/rb_tap_anywhere" android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:text="点任意" android:textSize="13sp" android:textColor="@android:color/black" android:button="@null" android:drawableRight="@android:drawable/btn_radio" android:gravity="center_vertical" />
-                <RadioButton android:id="@+id/rb_swipe" android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:text="滑动" android:textSize="13sp" android:textColor="@android:color/black" android:button="@null" android:drawableRight="@android:drawable/btn_radio" android:gravity="center_vertical" />
-            </RadioGroup>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingLeft="12dp" android:paddingRight="12dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="点击区域" android:textSize="14sp" android:textColor="@android:color/black" android:textStyle="bold" />
+                <TextView android:id="@+id/btn_tap_zones" android:layout_width="wrap_content" android:layout_height="36dp" android:gravity="center" android:text="设置 ›" android:textSize="14sp" android:textColor="@android:color/black" android:background="@android:color/white" android:paddingLeft="16dp" android:paddingRight="16dp" android:clickable="true" android:focusable="true" />
+            </LinearLayout>
 
             <!-- ===== 阅读区域边距 ===== -->
             <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#CCCCCC" android:layout_marginTop="8dp" />

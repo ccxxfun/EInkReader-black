@@ -32,18 +32,18 @@ jobs:
         run: gradle assembleDebug --no-daemon
 
       - name: Rename APK
-        run: mv app/build/outputs/apk/debug/app-debug.apk EInkReader-v${{ steps.ver.outputs.version }}-debug.apk
+        run: mv app/build/outputs/apk/debug/app-debug.apk XuBaiReader-v${{ steps.ver.outputs.version }}-debug.apk
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: EInkReader-debug-apk
-          path: EInkReader-v*.apk
+          name: XuBaiReader-debug-apk
+          path: XuBaiReader-v*.apk
 
       - name: Publish to Releases
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.ver.outputs.version }}
           name: v${{ steps.ver.outputs.version }}
-          files: EInkReader-v*.apk
+          files: XuBaiReader-v*.apk
           make_latest: true

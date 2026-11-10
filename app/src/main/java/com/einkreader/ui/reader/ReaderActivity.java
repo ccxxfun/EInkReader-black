@@ -55,6 +55,7 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
     /** 亮度按钮是否显示百分比数值（阅读设置可开关） */
     private boolean showBrightnessPercent = true;
     private TextView btnBack;
+    private TextView btnHome;
     private TextView btnToc;
     private TextView btnFontMinus;
     private TextView btnFontPlus;
@@ -121,6 +122,7 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
         statusBattery = (BatteryView) findViewById(R.id.status_battery_view);
         statusProgress = (TextView) findViewById(R.id.status_progress);
         btnBack = (TextView) findViewById(R.id.btn_back);
+        btnHome = (TextView) findViewById(R.id.btn_home);
         btnToc = (TextView) findViewById(R.id.btn_toc);
         btnFontMinus = (TextView) findViewById(R.id.btn_font_minus);
         btnFontPlus = (TextView) findViewById(R.id.btn_font_plus);
@@ -152,6 +154,18 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+        btnHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 等同于按 Home 键，直接回到电纸书桌面
+                toggleMenu(false);
+                saveProgress();
+                Intent home = new Intent(Intent.ACTION_MAIN);
+                home.addCategory(Intent.CATEGORY_HOME);
+                home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(home);
             }
         });
         btnToc.setOnClickListener(new View.OnClickListener() {
@@ -459,23 +473,35 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
         menuVisible = show;
         if (show) {
             updateStatusBar();
-            topStatusBar.setVisibility(showStatusBar ? View.VISIBLE : View.GONE);
             bottomMenu.setVisibility(View.VISIBLE);
         } else {
-            topStatusBar.setVisibility(View.GONE);
             bottomMenu.setVisibility(View.GONE);
         }
+        // 顶部状态栏不受菜单影响：由"显示顶部状态栏"开关独立控制（常驻）
     }
 
     /**
      * 应用阅读设置中的显示开关：
-     * 顶部状态栏显隐、亮度按钮百分比显隐
+     * 顶部状态栏显隐（开启时常驻顶部，阅读区让出空间重新分页）、
+     * 亮度按钮百分比显隐
      */
     private void applyDisplayOptions() {
-        showStatusBar = safeGetFloat(prefs, "show_status_bar", 1f) > 0.5f;
+        showStatusBar = safeGetFloat(prefs, "show_status_bar", 0f) > 0.5f;
         showBrightnessPercent = safeGetFloat(prefs, "show_brightness_percent", 1f) > 0.5f;
-        if (menuVisible) {
+
+        if (topStatusBar != null) {
             topStatusBar.setVisibility(showStatusBar ? View.VISIBLE : View.GONE);
+            if (readerView != null) {
+                // 阅读区顶部让出状态栏高度，onSizeChanged 会自动重新分页
+                int topMargin = showStatusBar
+                        ? (int) (32 * getResources().getDisplayMetrics().density + 0.5f) : 0;
+                android.widget.FrameLayout.LayoutParams lp =
+                        (android.widget.FrameLayout.LayoutParams) readerView.getLayoutParams();
+                if (lp != null && lp.topMargin != topMargin) {
+                    lp.topMargin = topMargin;
+                    readerView.setLayoutParams(lp);
+                }
+            }
         }
         float brightness = safeGetFloat(prefs, "screen_brightness", 0.5f);
         setBrightLabels((int) (brightness * 100));

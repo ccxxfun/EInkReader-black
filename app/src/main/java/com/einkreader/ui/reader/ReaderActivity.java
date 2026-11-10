@@ -508,8 +508,8 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
             String t = ch.getTitle();
             titles.add(t != null ? t : "无标题");
         }
-        intent.putStringArrayListExtra("chapter_titles", titles);
-        intent.putExtra("current_index", currentChapterIndex);
+        intent.putStringArrayListExtra(TocActivity.EXTRA_CHAPTERS, titles);
+        intent.putExtra(TocActivity.EXTRA_CURRENT_CHAPTER, currentChapterIndex);
         startActivityForResult(intent, REQUEST_TOC);
     }
 

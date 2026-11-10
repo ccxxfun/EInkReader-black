@@ -118,7 +118,8 @@ public class EpubParser {
     // ==================== 缓存机制 ====================
 
     private static String getCacheKey(File file) {
-        return file.getAbsolutePath() + "|" + file.length() + "|" + file.lastModified();
+        // v2：标题提取逻辑修复后需要重新解析旧缓存
+        return "v2|" + file.getAbsolutePath() + "|" + file.length() + "|" + file.lastModified();
     }
 
     /** 外部存储缓存目录，运行时由 initCacheDir 设置 */
@@ -637,11 +638,15 @@ public class EpubParser {
 
             StringBuilder sb = new StringBuilder();
             boolean skipTag = false;
+            boolean inHead = false;
 
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
                 switch (parser.getEventType()) {
                     case XmlPullParser.START_TAG:
                         String tag = parser.getName();
+                        if ("head".equalsIgnoreCase(tag)) {
+                            inHead = true; // 跳过 <head>（含 <title>），避免元数据混入正文
+                        }
                         if ("p".equalsIgnoreCase(tag) || "h1".equalsIgnoreCase(tag) ||
                             "h2".equalsIgnoreCase(tag) || "h3".equalsIgnoreCase(tag) ||
                             "h4".equalsIgnoreCase(tag) || "div".equalsIgnoreCase(tag) ||
@@ -654,7 +659,7 @@ public class EpubParser {
                         break;
 
                     case XmlPullParser.TEXT:
-                        if (!skipTag) {
+                        if (!skipTag && !inHead) {
                             String text = parser.getText();
                             if (text != null) {
                                 sb.append(text.trim());
@@ -664,6 +669,9 @@ public class EpubParser {
 
                     case XmlPullParser.END_TAG:
                         String endTag = parser.getName();
+                        if ("head".equalsIgnoreCase(endTag)) {
+                            inHead = false;
+                        }
                         if ("style".equalsIgnoreCase(endTag) || "script".equalsIgnoreCase(endTag)) {
                             skipTag = false;
                         }
@@ -724,36 +732,30 @@ public class EpubParser {
 
     /**
      * 从 href 或内容中提取章节标题
+     * 注意：content 是已去掉 HTML 标签的纯文本（不能搜 <h1> 标签），
+     * 第一行非空文本通常就是章节标题（来自 XHTML 的 h1/h2）
      */
     private static String extractTitleFromHref(String href, String content, int index) {
+        // 1. 从纯文本第一行提取标题（正文开头的章节标题）
+        if (content != null && !content.isEmpty()) {
+            String[] lines = content.split("\n");
+            for (int i = 0; i < Math.min(lines.length, 5); i++) {
+                String line = lines[i].trim();
+                if (line.isEmpty()) continue;
+                // 第一行非空文本：够短才当作标题
+                if (line.length() <= 50) {
+                    return line;
+                }
+                break; // 第一行太长，不像标题
+            }
+        }
+
+        // 2. 从文件名提取（如 chapter12.xhtml → 第12章）
         String name = href;
         int lastSlash = name.lastIndexOf('/');
         if (lastSlash >= 0) name = name.substring(lastSlash + 1);
         int dotIndex = name.lastIndexOf('.');
         if (dotIndex > 0) name = name.substring(0, dotIndex);
-
-        if (content != null && content.length() < 200000) {
-            String[] titleTags = { "h1", "h2", "h3", "title" };
-            for (String tag : titleTags) {
-                int startIdx = content.indexOf("<" + tag + ">");
-                if (startIdx < 0) startIdx = content.indexOf("<" + tag + " ");
-                if (startIdx < 0) startIdx = content.toLowerCase().indexOf("<" + tag + ">");
-                if (startIdx >= 0) {
-                    int openEnd = content.indexOf(">", startIdx);
-                    if (openEnd >= 0) {
-                        int closeIdx = content.indexOf("</" + tag + ">", openEnd + 1);
-                        if (closeIdx > openEnd) {
-                            String title = content.substring(openEnd + 1, closeIdx)
-                                .replaceAll("<[^>]*>", "")
-                                .trim();
-                            if (!title.isEmpty() && title.length() < 100) {
-                                return title;
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         if (!name.isEmpty() && !name.matches("\\d+")) {
             String pretty = name
@@ -768,6 +770,7 @@ public class EpubParser {
             return name;
         }
 
+        // 3. 兜底：按 spine 位置编号
         return "第" + (index + 1) + "章";
     }
 

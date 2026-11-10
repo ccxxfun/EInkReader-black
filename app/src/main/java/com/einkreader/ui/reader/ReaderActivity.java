@@ -48,7 +48,12 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
     private View bottomMenu;
     private TextView statusTime;
     private TextView statusChapter;
-    private TextView statusBattery;
+    private BatteryView statusBattery;
+    private TextView statusProgress;
+    /** 是否显示顶部状态栏（阅读设置可开关） */
+    private boolean showStatusBar = true;
+    /** 亮度按钮是否显示百分比数值（阅读设置可开关） */
+    private boolean showBrightnessPercent = true;
     private TextView btnBack;
     private TextView btnToc;
     private TextView btnFontMinus;
@@ -113,7 +118,8 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
         bottomMenu = findViewById(R.id.bottom_menu);
         statusTime = (TextView) findViewById(R.id.status_time);
         statusChapter = (TextView) findViewById(R.id.status_chapter);
-        statusBattery = (TextView) findViewById(R.id.status_battery);
+        statusBattery = (BatteryView) findViewById(R.id.status_battery_view);
+        statusProgress = (TextView) findViewById(R.id.status_progress);
         btnBack = (TextView) findViewById(R.id.btn_back);
         btnToc = (TextView) findViewById(R.id.btn_toc);
         btnFontMinus = (TextView) findViewById(R.id.btn_font_minus);
@@ -128,10 +134,13 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
         // 应用夜间/日间主题（阅读区、菜单、状态栏、加载页整体换色）
         applyTheme(prefs.getBoolean(ReadingSettingsActivity.KEY_NIGHT_MODE, false));
 
+        // 应用状态栏 / 亮度百分比显示开关
+        applyDisplayOptions();
+
         // 初始化亮度按钮文字
         float initBrightness = safeGetFloat(prefs, "screen_brightness", 0.5f);
         int initPercent = (int) (initBrightness * 100);
-        btnBrightMinus.setText("亮-\n" + initPercent + "%");
+        setBrightLabels(initPercent);
 
         if (readerView == null) {
             showError("严重错误", "ReaderView 初始化失败");
@@ -450,12 +459,32 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
         menuVisible = show;
         if (show) {
             updateStatusBar();
-            topStatusBar.setVisibility(View.VISIBLE);
+            topStatusBar.setVisibility(showStatusBar ? View.VISIBLE : View.GONE);
             bottomMenu.setVisibility(View.VISIBLE);
         } else {
             topStatusBar.setVisibility(View.GONE);
             bottomMenu.setVisibility(View.GONE);
         }
+    }
+
+    /**
+     * 应用阅读设置中的显示开关：
+     * 顶部状态栏显隐、亮度按钮百分比显隐
+     */
+    private void applyDisplayOptions() {
+        showStatusBar = safeGetFloat(prefs, "show_status_bar", 1f) > 0.5f;
+        showBrightnessPercent = safeGetFloat(prefs, "show_brightness_percent", 1f) > 0.5f;
+        if (menuVisible) {
+            topStatusBar.setVisibility(showStatusBar ? View.VISIBLE : View.GONE);
+        }
+        float brightness = safeGetFloat(prefs, "screen_brightness", 0.5f);
+        setBrightLabels((int) (brightness * 100));
+    }
+
+    /** 按开关状态刷新亮-按钮文字（亮- / 亮-+百分比两行） */
+    private void setBrightLabels(int percent) {
+        if (btnBrightMinus == null) return;
+        btnBrightMinus.setText(showBrightnessPercent ? "亮-\n" + percent + "%" : "亮-");
     }
 
     /**
@@ -474,9 +503,18 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
             }
             statusChapter.setText(title);
         }
+        if (statusProgress != null && chapters != null && !chapters.isEmpty()
+                && currentChapterIndex < chapters.size()) {
+            // 全书进度 = (当前章序 + 章内页进度) / 总章数
+            float pageFrac = 1f;
+            if (readerView != null && readerView.getTotalPages() > 0) {
+                pageFrac = (readerView.getCurrentPage() + 1) / (float) readerView.getTotalPages();
+            }
+            int bookPercent = (int) (((currentChapterIndex + pageFrac) / chapters.size()) * 100f);
+            statusProgress.setText(bookPercent + "%");
+        }
         if (statusBattery != null) {
-            int level = getBatteryLevel();
-            statusBattery.setText(level + "%");
+            statusBattery.setLevel(getBatteryLevel());
         }
     }
 
@@ -536,8 +574,7 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
         prefs.edit().putFloat("screen_brightness", current).apply();
         applyBrightness(current);
         // 在按钮上直接显示亮度值，不用Toast（系统Toast在墨水屏上会一直闪）
-        int percent = (int) (current * 100);
-        if (btnBrightMinus != null) btnBrightMinus.setText("亮-\n" + percent + "%");
+        setBrightLabels((int) (current * 100));
     }
 
     /** 安全读 float，兼容旧版 int/boolean 存储 */
@@ -590,6 +627,10 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
         // 阅读区自己管理颜色，跳过
         if (v.getId() == R.id.reader_view) return;
 
+        if (v instanceof BatteryView) {
+            ((BatteryView) v).setThemeColor(fgColor);
+            return;
+        }
         if (v instanceof TextView) {
             ((TextView) v).setTextColor(fgColor);
             // 按钮本身透明背景由容器决定，容器已统一着色
@@ -635,6 +676,8 @@ public class ReaderActivity extends com.einkreader.ui.UiScaleActivity {
             }
         } else if (requestCode == REQUEST_READING_SETTINGS) {
             // 从设置页面返回，重新应用设置
+            applyDisplayOptions();
+            updateStatusBar();
             if (readerView != null) {
                 readerView.applySettings();
             }

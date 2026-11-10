@@ -111,6 +111,10 @@ public class ReadingSettingsActivity extends com.einkreader.ui.UiScaleActivity {
 
     // 全刷
     private CheckBox cbChapterRefresh;
+
+    // 显示开关
+    private CheckBox cbStatusBar;
+    private CheckBox cbBrightnessPercent;
     private int pageRefreshInterval = 0;
     private TextView tvPageRefreshValue;
 
@@ -310,6 +314,12 @@ public class ReadingSettingsActivity extends com.einkreader.ui.UiScaleActivity {
         cbChapterRefresh = findViewById(R.id.cb_chapter_refresh);
         cbChapterRefresh.setChecked(safeGetFloat(getSharedPreferences(PREFS_NAME, MODE_PRIVATE), "full_refresh_chapter", 1f) > 0.5f);
 
+        // ===== 显示开关 =====
+        cbStatusBar = findViewById(R.id.cb_status_bar);
+        cbStatusBar.setChecked(safeGetFloat(getSharedPreferences(PREFS_NAME, MODE_PRIVATE), "show_status_bar", 1f) > 0.5f);
+        cbBrightnessPercent = findViewById(R.id.cb_brightness_percent);
+        cbBrightnessPercent.setChecked(safeGetFloat(getSharedPreferences(PREFS_NAME, MODE_PRIVATE), "show_brightness_percent", 1f) > 0.5f);
+
         tvPageRefreshValue = findViewById(R.id.tv_page_refresh_value);
         updatePageRefreshDisplay();
         setupStepper(R.id.btn_page_refresh_minus, R.id.btn_page_refresh_plus, 0, 50, 1, pageRefreshInterval, new StepperCallback() {
@@ -404,6 +414,8 @@ public class ReadingSettingsActivity extends com.einkreader.ui.UiScaleActivity {
         editor.putFloat("padding_bottom", paddingBottom);
         editor.putFloat("padding_horizontal", paddingHorizontal);
         editor.putFloat("full_refresh_chapter", cbChapterRefresh.isChecked() ? 1f : 0f);
+        editor.putFloat("show_status_bar", cbStatusBar.isChecked() ? 1f : 0f);
+        editor.putFloat("show_brightness_percent", cbBrightnessPercent.isChecked() ? 1f : 0f);
         editor.putFloat("page_refresh_interval", pageRefreshInterval);
         editor.putFloat(KEY_REFRESH_DELAY1, refreshDelay1);
         editor.putFloat(KEY_REFRESH_DELAY2, refreshDelay2);

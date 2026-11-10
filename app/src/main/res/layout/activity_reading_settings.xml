@@ -116,6 +116,12 @@
                 <TextView android:id="@+id/btn_overlap_lines_plus" android:layout_width="42dp" android:layout_height="36dp" android:gravity="center" android:text="＋" android:textSize="18sp" android:textColor="@android:color/black" android:background="@android:color/white" android:clickable="true" android:focusable="true" />
             </LinearLayout>
 
+            <!-- ===== 显示开关 ===== -->
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#CCCCCC" android:layout_marginTop="8dp" />
+            <TextView android:layout_width="match_parent" android:layout_height="36dp" android:gravity="center_vertical" android:text="显示开关" android:textSize="14sp" android:textColor="@android:color/black" android:paddingLeft="12dp" android:textStyle="bold" />
+            <CheckBox android:id="@+id/cb_status_bar" android:layout_width="match_parent" android:layout_height="36dp" android:text="显示顶部状态栏（时间/章节/进度/电量）" android:textSize="13sp" android:textColor="@android:color/black" android:checked="true" android:paddingLeft="12dp" />
+            <CheckBox android:id="@+id/cb_brightness_percent" android:layout_width="match_parent" android:layout_height="36dp" android:text="亮度按钮显示百分比数值" android:textSize="13sp" android:textColor="@android:color/black" android:checked="true" android:paddingLeft="12dp" />
+
             <!-- ===== 全屏刷新设置 ===== -->
             <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#CCCCCC" android:layout_marginTop="8dp" />
             <TextView android:layout_width="match_parent" android:layout_height="36dp" android:gravity="center_vertical" android:text="墨水屏全刷" android:textSize="14sp" android:textColor="@android:color/black" android:paddingLeft="12dp" android:textStyle="bold" />

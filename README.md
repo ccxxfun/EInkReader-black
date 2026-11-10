@@ -7,6 +7,7 @@
 
 - 应用名：**虚白**
 - 包名：`com.xubai.reader`
+- 支持： Android 4.4 (API 19)+
 - 开发者：[ccxxfun](https://github.com/ccxxfun)（原开发者：xfl1996）
 
 ## 核心特性

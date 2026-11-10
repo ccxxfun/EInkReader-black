@@ -170,9 +170,35 @@ public class ReadingSettingsActivity extends com.einkreader.ui.UiScaleActivity {
     }
 
     private void initUI() {
-        // 返回
+        // ===== 两级导航：主菜单 → 分类子页 → 返回上一级 =====
         findViewById(R.id.btn_back).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { saveAndFinish(); }
+            @Override public void onClick(View v) {
+                if (findViewById(R.id.detail_page).getVisibility() == View.VISIBLE) {
+                    showMenuPage();
+                } else {
+                    saveAndFinish();
+                }
+            }
+        });
+
+        // 分类主菜单点击 → 进入对应子页
+        findViewById(R.id.row_typography).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { openSection("字体与排版", R.id.sec_typography, R.id.sec_font); }
+        });
+        findViewById(R.id.row_tapzone).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { openSection("点击区域", R.id.sec_tapzone); }
+        });
+        findViewById(R.id.row_margin).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { openSection("边距与翻页", R.id.sec_margin); }
+        });
+        findViewById(R.id.row_display).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { openSection("显示开关", R.id.sec_display); }
+        });
+        findViewById(R.id.row_refresh).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { openSection("墨水屏全刷", R.id.sec_refresh); }
+        });
+        findViewById(R.id.row_keys).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { openSection("物理按键映射", R.id.sec_keys); }
         });
 
         // 恢复默认
@@ -283,7 +309,7 @@ public class ReadingSettingsActivity extends com.einkreader.ui.UiScaleActivity {
         tvKeyLog.setPadding(dp2px(12), dp2px(8), dp2px(12), dp2px(8));
         tvKeyLog.setTypeface(android.graphics.Typeface.MONOSPACE);
         tvKeyLog.setText("按键日志:\n等待按键...");
-        ((android.widget.LinearLayout) findViewById(R.id.settings_content)).addView(tvKeyLog);
+        ((android.widget.LinearLayout) findViewById(R.id.sec_keys)).addView(tvKeyLog);
 
         // ===== 边距 =====
         tvPaddingTopValue = findViewById(R.id.tv_padding_top_value);
@@ -343,10 +369,42 @@ public class ReadingSettingsActivity extends com.einkreader.ui.UiScaleActivity {
         tvPageRefreshValue.setText(pageRefreshInterval == 0 ? "关闭" : "每" + pageRefreshInterval + "页");
     }
 
+    // ===== 两级导航 =====
+
+    /** 打开某个分类子页：隐藏主菜单，只显示该分类对应的区块 */
+    private void openSection(String title, int... sectionIds) {
+        findViewById(R.id.menu_page).setVisibility(View.GONE);
+        findViewById(R.id.detail_page).setVisibility(View.VISIBLE);
+        ((TextView) findViewById(R.id.tv_settings_title)).setText(title);
+
+        int[] all = {R.id.sec_typography, R.id.sec_font, R.id.sec_tapzone,
+                R.id.sec_margin, R.id.sec_display, R.id.sec_refresh, R.id.sec_keys};
+        for (int id : all) {
+            findViewById(id).setVisibility(View.GONE);
+        }
+        for (int id : sectionIds) {
+            findViewById(id).setVisibility(View.VISIBLE);
+        }
+        findViewById(R.id.detail_page).scrollTo(0, 0);
+    }
+
+    /** 回到分类主菜单 */
+    private void showMenuPage() {
+        findViewById(R.id.detail_page).setVisibility(View.GONE);
+        findViewById(R.id.menu_page).setVisibility(View.VISIBLE);
+        ((TextView) findViewById(R.id.tv_settings_title)).setText("阅读设置");
+    }
+
     // ===== 按键处理 =====
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // 物理返回键：分类子页 → 主菜单
+        if (keyCode == KeyEvent.KEYCODE_BACK
+                && findViewById(R.id.detail_page).getVisibility() == View.VISIBLE) {
+            showMenuPage();
+            return true;
+        }
         // 按键日志
         String name = getKeyName(keyCode);
         if (keyLog.length() > 500) keyLog.setLength(0);

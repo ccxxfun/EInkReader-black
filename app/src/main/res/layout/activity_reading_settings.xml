@@ -104,14 +104,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- ===== 区块：点击区域 ===== -->
-            <LinearLayout android:id="@+id/sec_tapzone" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingLeft="12dp" android:paddingRight="12dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="点击区域" android:textSize="14sp" android:textColor="@android:color/black" android:textStyle="bold" />
-                    <TextView android:id="@+id/btn_tap_zones" android:layout_width="wrap_content" android:layout_height="36dp" android:gravity="center" android:text="设置 ›" android:textSize="14sp" android:textColor="@android:color/black" android:background="@android:color/white" android:paddingLeft="16dp" android:paddingRight="16dp" android:clickable="true" android:focusable="true" />
-                </LinearLayout>
-            </LinearLayout>
-
             <!-- ===== 区块：边距与翻页 ===== -->
             <LinearLayout android:id="@+id/sec_margin" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
                 <TextView android:layout_width="match_parent" android:layout_height="36dp" android:gravity="center_vertical" android:text="阅读区域边距(dp)" android:textSize="14sp" android:textColor="@android:color/black" android:paddingLeft="12dp" android:textStyle="bold" />

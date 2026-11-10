@@ -186,7 +186,7 @@ public class ReadingSettingsActivity extends com.einkreader.ui.UiScaleActivity {
             @Override public void onClick(View v) { openSection("字体与排版", R.id.sec_typography, R.id.sec_font); }
         });
         findViewById(R.id.row_tapzone).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { openSection("点击区域", R.id.sec_tapzone); }
+            @Override public void onClick(View v) { startActivity(new Intent(ReadingSettingsActivity.this, TapZoneActivity.class)); }
         });
         findViewById(R.id.row_margin).setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) { openSection("边距与翻页", R.id.sec_margin); }
@@ -263,13 +263,6 @@ public class ReadingSettingsActivity extends com.einkreader.ui.UiScaleActivity {
                 getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit().remove("custom_font_path").apply();
                 tvCurrentFont.setText("系统默认");
                 Toast.makeText(ReadingSettingsActivity.this, "已恢复默认字体", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // ===== 点击区域设置 =====
-        findViewById(R.id.btn_tap_zones).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                startActivity(new Intent(ReadingSettingsActivity.this, TapZoneActivity.class));
             }
         });
 
@@ -377,7 +370,7 @@ public class ReadingSettingsActivity extends com.einkreader.ui.UiScaleActivity {
         findViewById(R.id.detail_page).setVisibility(View.VISIBLE);
         ((TextView) findViewById(R.id.tv_settings_title)).setText(title);
 
-        int[] all = {R.id.sec_typography, R.id.sec_font, R.id.sec_tapzone,
+        int[] all = {R.id.sec_typography, R.id.sec_font,
                 R.id.sec_margin, R.id.sec_display, R.id.sec_refresh, R.id.sec_keys};
         for (int id : all) {
             findViewById(id).setVisibility(View.GONE);

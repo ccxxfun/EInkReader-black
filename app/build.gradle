@@ -8,8 +8,8 @@ android {
         applicationId "com.einkreader.black"
         minSdkVersion 19
         targetSdkVersion 19
-        versionCode 16
-        versionName "1.2.1"
+        versionCode 17
+        versionName "1.2.2"
     }
 
     // 固定签名：保证每次构建 APK 签名一致，可覆盖安装

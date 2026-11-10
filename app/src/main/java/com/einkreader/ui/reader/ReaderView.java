@@ -614,7 +614,8 @@ public class ReaderView extends View {
         float realLineHeight = fm.descent - fm.ascent;
         float lineHeight = realLineHeight * lineSpacing;
         float paraGap = paragraphSpacing * density;
-        float bottomLimit = viewHeight - paddingBottom * density;
+        // 页码区域至少预留 18dp，防止页码与正文重叠
+        float bottomLimit = viewHeight - Math.max(paddingBottom * density, 18 * density);
         float indent = textPaint.measureText("字") * 2f;  // 段首缩进：2个字宽（自动适配字体大小）
 
         int stride = Math.max(1, linesPerPage - overlapLines);
@@ -642,14 +643,13 @@ public class ReaderView extends View {
             needIndent = false;
         }
 
-        // 页码（底部居中，浅灰色）
+        // 页码（底部居中，随日间/夜间主题变色，墨水屏清晰可读）
         Paint pagePaint = new Paint(textPaint);
-        pagePaint.setTextSize(10 * density);
-        pagePaint.setColor(Color.GRAY);
+        pagePaint.setTextSize(13 * density);
         pagePaint.setTextAlign(Paint.Align.CENTER);
         pagePaint.setFakeBoldText(false);
         String pageStr = (currentPage + 1) + " / " + totalPages;
-        canvas.drawText(pageStr, viewWidth / 2f, viewHeight - 2 * density, pagePaint);
+        canvas.drawText(pageStr, viewWidth / 2f, viewHeight - 5 * density, pagePaint);
     }
 
     // ==================== 全屏刷新 ====================

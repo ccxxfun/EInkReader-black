@@ -5,11 +5,11 @@ android {
     compileSdkVersion 35
     
     defaultConfig {
-        applicationId "com.einkreader.black"
+        applicationId "com.xubai.reader"
         minSdkVersion 19
         targetSdkVersion 19
-        versionCode 17
-        versionName "1.2.2"
+        versionCode 18
+        versionName "1.3.0"
     }
 
     // 固定签名：保证每次构建 APK 签名一致，可覆盖安装

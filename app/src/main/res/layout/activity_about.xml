@@ -61,7 +61,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="EInkReader Black"
+                android:text="虚白"
                 android:textSize="26sp"
                 android:textColor="#FF000000"
                 android:textStyle="bold" />
@@ -78,10 +78,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="超轻量墨水屏小说阅读器"
+                android:text="出处：《庄子·人间世》「虚室生白，吉祥止止」&#10;空明的心室，自会生出光明；静心澄空，智慧自现。&#10;&#10;XuBai Reader"
                 android:textSize="14sp"
-                android:textColor="#FF999999"
-                android:layout_marginTop="4dp" />
+                android:textColor="#FF666666"
+                android:lineSpacingMultiplier="1.4"
+                android:gravity="center"
+                android:layout_marginTop="8dp" />
 
             <!-- 分隔线 -->
             <View

@@ -81,13 +81,14 @@ public class TapZoneActivity extends com.einkreader.ui.UiScaleActivity {
 
         // ===== 提示 =====
         TextView hint = new TextView(this);
-        hint.setText("点击九宫格任意区域，选择该区域对应的动作\n上/下滚动阅读时点击对应区域即可翻页");
+        hint.setText("点击九宫格任意区域，选择该区域对应的动作\n阅读时点击对应区域即可触发");
         hint.setTextSize(13);
-        hint.setTextColor(0xFF666666);
+        hint.setTextColor(Color.BLACK);
         hint.setGravity(Gravity.CENTER);
         int hPad = dp(16);
-        hint.setPadding(hPad, dp(12), hPad, dp(12));
-        root.addView(hint, matchLp(-1));
+        hint.setPadding(hPad, dp(10), hPad, dp(10));
+        root.addView(hint, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
         // ===== 3x3 九宫格（占满剩余空间）=====
         LinearLayout grid = new LinearLayout(this);
@@ -95,7 +96,7 @@ public class TapZoneActivity extends com.einkreader.ui.UiScaleActivity {
         LinearLayout.LayoutParams gridLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f);
         int g = dp(2); // 格间距
-        grid.setPadding(g, g, g, g);
+        grid.setPadding(g, 0, g, g);
         root.addView(grid, gridLp);
 
         for (int row = 0; row < 3; row++) {
@@ -109,19 +110,19 @@ public class TapZoneActivity extends com.einkreader.ui.UiScaleActivity {
                 final int index = row * 3 + col;
 
                 TextView cell = new TextView(this);
-                cell.setTextSize(15);
+                cell.setTextSize(16);
                 cell.setTextColor(Color.BLACK);
                 cell.setGravity(Gravity.CENTER);
+                // 墨水屏友好：白底黑框黑字，边框清晰
                 GradientDrawable bg = new GradientDrawable();
-                bg.setColor(0xFFF5F5F5);
-                bg.setStroke(dp(1), 0xFFBBBBBB);
-                bg.setCornerRadius(dp(4));
+                bg.setColor(Color.WHITE);
+                bg.setStroke(dp(1), Color.BLACK);
+                bg.setCornerRadius(dp(2));
                 cell.setBackground(bg);
                 LinearLayout.LayoutParams cellLp = new LinearLayout.LayoutParams(
                         0, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
-                LinearLayout.LayoutParams cellLpMargins = cellLp;
-                cellLpMargins.setMargins(g, g, g, g);
-                rowLl.addView(cell, cellLpMargins);
+                cellLp.setMargins(g, g, g, g);
+                rowLl.addView(cell, cellLp);
 
                 cell.setOnClickListener(new View.OnClickListener() {
                     @Override public void onClick(View v) { pickAction(index); }
